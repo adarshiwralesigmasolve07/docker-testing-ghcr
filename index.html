@@ -3,25 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Instance Info</title>
+  <title>Instance Info Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #f4f6f9;
       padding: 2rem;
       text-align: center;
     }
     h1 {
-      color: #333;
+      color: #2c3e50;
     }
     .info-box {
-      background: #fff;
+      background: #ffffff;
       padding: 1.5rem;
       margin: 1rem auto;
       display: inline-block;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
       text-align: left;
+      min-width: 320px;
     }
     .info-item {
       margin-bottom: 10px;
@@ -29,10 +30,15 @@
     .label {
       font-weight: bold;
     }
+    .quote {
+      margin-top: 20px;
+      font-style: italic;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <h1>Instance Information</h1>
+  <h1>Instance Info Dashboard</h1>
   <div class="info-box">
     <div class="info-item"><span class="label">Public IP:</span> <span id="ip">Loading...</span></div>
     <div class="info-item"><span class="label">City:</span> <span id="city">Loading...</span></div>
@@ -40,9 +46,13 @@
     <div class="info-item"><span class="label">ISP:</span> <span id="org">Loading...</span></div>
     <div class="info-item"><span class="label">Date & Time:</span> <span id="datetime">Loading...</span></div>
     <div class="info-item"><span class="label">User-Agent:</span> <span id="ua">Loading...</span></div>
+    <div class="info-item"><span class="label">Screen Resolution:</span> <span id="screenRes">Loading...</span></div>
+    <div class="info-item"><span class="label">CPU Cores:</span> <span id="cpuCores">Loading...</span></div>
+    <div class="quote" id="quote">Fetching quote...</div>
   </div>
 
   <script>
+    // Get IP & Location info
     fetch("https://ipapi.co/json/")
       .then(res => res.json())
       .then(data => {
@@ -58,10 +68,21 @@
         document.getElementById("org").textContent = "Unavailable";
       });
 
+    // Browser data
     document.getElementById("ua").textContent = navigator.userAgent;
+    document.getElementById("datetime").textContent = new Date().toLocaleString();
+    document.getElementById("screenRes").textContent = `${screen.width} x ${screen.height}`;
+    document.getElementById("cpuCores").textContent = navigator.hardwareConcurrency || "Unavailable";
 
-    const now = new Date();
-    document.getElementById("datetime").textContent = now.toLocaleString();
+    // Get motivational quote
+    fetch("https://api.quotable.io/random")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("quote").textContent = `"${data.content}" — ${data.author}`;
+      })
+      .catch(() => {
+        document.getElementById("quote").textContent = "Stay positive. Work hard. Make it happen.";
+      });
   </script>
 </body>
 </html>
