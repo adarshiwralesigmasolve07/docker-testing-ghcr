@@ -86,44 +86,44 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Trigger ECS deployment
-        if: ${{ github.event_name != 'pull_request' }}
-        run: |
-          # Get all tags that were pushed
-          ALL_TAGS=$(echo "${{ steps.meta.outputs.tags }}" | sed 's/.*://g')
+      # - name: Trigger ECS deployment
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   run: |
+      #     # Get all tags that were pushed
+      #     ALL_TAGS=$(echo "${{ steps.meta.outputs.tags }}" | sed 's/.*://g')
           
 
-          # Convert tags to JSON array format
-          TAGS_JSON=$(echo "$ALL_TAGS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+      #     # Convert tags to JSON array format
+      #     TAGS_JSON=$(echo "$ALL_TAGS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
 
-          # Create payload matching the Lambda's expected format
-          PAYLOAD=$(cat <<EOF
-          {
-            "repository": {
-              "full_name": "${{ github.repository }}"
-            },
-            "package": {
-              "name": "${{ github.repository }}",
-              "package_version": {
-                "metadata": {
-                  "container": {
-                    "tags": ${TAGS_JSON}
-                  }
-                }
-              }
-            }
-          }
-          EOF
-          )
+      #     # Create payload matching the Lambda's expected format
+      #     PAYLOAD=$(cat <<EOF
+      #     {
+      #       "repository": {
+      #         "full_name": "${{ github.repository }}"
+      #       },
+      #       "package": {
+      #         "name": "${{ github.repository }}",
+      #         "package_version": {
+      #           "metadata": {
+      #             "container": {
+      #               "tags": ${TAGS_JSON}
+      #             }
+      #           }
+      #         }
+      #       }
+      #     }
+      #     EOF
+      #     )
           
-          echo "Triggering deployment for repository: ${{ github.repository }}"
-          echo "Tags: ${TAGS_JSON}"
+      #     echo "Triggering deployment for repository: ${{ github.repository }}"
+      #     echo "Tags: ${TAGS_JSON}"
           
-          # Call Lambda function URL
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d "$PAYLOAD" \
-            ${{ env.WEBHOOK_DEVELOP }}
+      #     # Call Lambda function URL
+      #     curl -X POST \
+      #       -H "Content-Type: application/json" \
+      #       -d "$PAYLOAD" \
+      #       ${{ env.WEBHOOK_DEVELOP }}
           
-          echo ""
-          echo "📤 Deployment webhook triggered successfully in Development account"
+      #     echo ""
+      #     echo "📤 Deployment webhook triggered successfully in Development account"
